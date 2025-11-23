@@ -14,7 +14,7 @@ class Tweet:
         self.mediaUrl = media_url
 
     @contextmanager
-    def open_url(url, mode="rb"):
+    def open_url(self, url, mode="rb"):
         response = requests.get(url)
         response.raise_for_status()
         
@@ -32,7 +32,7 @@ class Tweet:
         url = "https://upload.twitter.com/1.1/media/upload.json"
 
         response = None
-        with open_url(self.mediaUrl, "rb") as file:
+        with self.open_url(self.mediaUrl, "rb") as file:
             response = requests.post(url, auth=auth, files={"media": file})
 
         media_id = None
