@@ -14,10 +14,10 @@ class Tweet:
     def send(self, auth):
 
         # step 0, download the media
-        response = requests.get(self.mediaUrl)
-        response.raise_for_status()
+        resp = requests.get(self.mediaUrl)
+        resp.raise_for_status()
         with open("/tmp/rpgpowerforge_trello_media.png", "wb") as f:
-            f.write(response.content)
+            f.write(resp.content)
 
         # step 1 : upload media
         url = "https://upload.twitter.com/1.1/media/upload.json"
@@ -27,8 +27,7 @@ class Tweet:
             print(self.mediaUrl)
             print(file)
             response = requests.post(url, auth=auth, files={"media": file})
-
-        print(response.json())
+            print(response)
 
         media_id = None
         if response:
