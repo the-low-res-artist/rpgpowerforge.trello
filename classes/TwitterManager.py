@@ -28,6 +28,8 @@ class Tweet:
             print(file)
             response = requests.post(url, auth=auth, files={"media": file})
 
+        print(response.json())
+
         media_id = None
         if response:
             if "media_id" in response.json():
