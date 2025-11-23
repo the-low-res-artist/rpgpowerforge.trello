@@ -1,5 +1,60 @@
 # twitter_manager.py
-import tweepy
+import os
+import requests
+from requests_oauthlib import OAuth1
+from io import BytesIO
+from contextlib import contextmanager
+
+# =======================================================
+# Tweet class
+class Tweet:
+
+    def __init__(self, text, media_url):
+        self.contentStr = text
+        self.mediaUrl = media_url
+
+    @contextmanager
+    def open_url(url, mode="rb"):
+        response = requests.get(url)
+        response.raise_for_status()
+        
+        file_like = BytesIO(response.content)
+        
+        try:
+            yield file_like
+        finally:
+            file_like.close()
+            response.close()
+
+    def send(self, auth):
+
+        # step 1 : upload media
+        url = "https://upload.twitter.com/1.1/media/upload.json"
+
+        response = None
+        with open_url(self.mediaUrl, "rb") as file:
+            response = requests.post(url, auth=auth, files={"media": file})
+
+        media_id = None
+        if response:
+            if "media_id" in response.json():
+                media_id = response.json()["media_id"]
+
+        #safe exit
+        if media_id == None:
+            print("fail to upload media")
+            return
+
+        # step 2 post the tweet
+        tweet_url = "https://api.twitter.com/2/tweets"
+        payload = {
+            "text": self.contentStr,
+            "media": {"media_ids": [str(media_id)]}  # Use the media ID from the upload step
+        }
+
+        return requests.post(tweet_url, auth=auth, json=payload)
+
+
 
 class TwitterManager:
     """Manages Twitter API interactions."""
@@ -12,20 +67,17 @@ class TwitterManager:
         self.access_token_secret = access_token_secret
         self.bearer_token = bearer_token
         self.client = None
-        #self._connect()
+        self._connect()
     
     def _connect(self):
         """Initialize connection to Twitter API."""
         try:
-            self.client = tweepy.Client(
-                bearer_token=self.bearer_token,
-                consumer_key=self.api_key,
-                consumer_secret=self.api_secret,
-                access_token=self.access_token,
-                access_token_secret=self.access_token_secret
+            self.client = OAuth1(
+                self.api_key,
+                self.api_secret,
+                self.access_token,
+                self.access_token_secret
             )
-            # Test connection
-            self.client.get_me()
         except Exception as e:
             raise ConnectionError(f"Failed to connect to Twitter: {e}")
     
@@ -40,13 +92,9 @@ class TwitterManager:
             tuple: (success: bool, tweet_id: str or None)
         """        
         try:
-            response = self.client.create_tweet(text=text)
-            tweet_id = response.data['id']
-            print(f"✓ Tweet posted successfully (ID: {tweet_id})")
-            return True, tweet_id
-        except tweepy.errors.TweepyException as e:
-            print(f"✗ Twitter API error: {e}")
-            return False, None
+            twt = Tweet(text, media_url)
+            response = twt.send(self.client)
+            return True, None
         except Exception as e:
             print(f"✗ Unexpected error posting tweet: {e}")
             return False, None
