@@ -23,7 +23,7 @@ class Tweet:
         url = "https://upload.twitter.com/1.1/media/upload.json"
 
         response = None
-        with self.open("/tmp/rpgpowerforge_trello_media.png", "rb") as file:
+        with open("/tmp/rpgpowerforge_trello_media.png", "rb") as file:
             print(self.mediaUrl)
             print(file)
             response = requests.post(url, auth=auth, files={"media": file})
