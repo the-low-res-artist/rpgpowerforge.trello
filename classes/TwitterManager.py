@@ -33,6 +33,8 @@ class Tweet:
 
         response = None
         with self.open_url(self.mediaUrl, "rb") as file:
+            print(self.mediaUrl)
+            print(file)
             response = requests.post(url, auth=auth, files={"media": file})
 
         media_id = None
