@@ -40,9 +40,8 @@ class TwitterManager:
             tuple: (success: bool, tweet_id: str or None)
         """        
         try:
-            #response = self.client.create_tweet(text=text)
-            #tweet_id = response.data['id']
-            tweet_id = 0
+            response = self.client.create_tweet(text=text)
+            tweet_id = response.data['id']
             print(f"✓ Tweet posted successfully (ID: {tweet_id})")
             return True, tweet_id
         except tweepy.errors.TweepyException as e:

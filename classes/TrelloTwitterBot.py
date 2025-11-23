@@ -100,15 +100,12 @@ class TrelloTwitterBot:
             if (labels != ""):
                 tweet_text += "\n\n" + labels
 
-            print(tweet_text)
-            print(cover_url)
-
             # Post tweet
             success, tweet_id = self.twitter.post_tweet(tweet_text, cover_url)
             
             if success:
                 # Mark card as tracked
-                # self.tracker.add(card.id)
+                self.tracker.add(card.id)
                 tweeted_count += 1
             else:
                 print(f"Skipping card tracking due to tweet failure")
