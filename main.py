@@ -5,7 +5,7 @@ import os
 if __name__ == "__main__":
 
     # Configure the bot
-    bot = TrelloTwitterBot('config/config.json')
+    bot = TrelloTwitterBot()
     
     # run once
     # fetch trello + tweet is a new card is done

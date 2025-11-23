@@ -10,11 +10,11 @@ from classes.CardTracker import CardTracker
 class TrelloTwitterBot:
     """Main bot orchestrator that coordinates all components."""
     
-    def __init__(self, config_file='config.json'):
+    def __init__(self):
         print("Initializing Trello to Twitter Bot...")
         
         # Load configuration
-        self.config = ConfigLoader(config_file)
+        self.config = ConfigLoader()
         
         # Initialize managers
         self._init_trello()
@@ -148,31 +148,5 @@ class TrelloTwitterBot:
             else:
                 print(f"\n✓ Posted {tweeted_count} tweet(s)")
         except Exception as e:
-            print(f"✗ Error during check: {e}")
+            print(f"Error during check: {e}")
             raise
-    
-    def run_continuous(self, interval=None):
-        """
-        Run continuously, checking at regular intervals.
-        
-        Args:
-            interval: Seconds between checks (uses config if not specified)
-        """
-        if interval is None:
-            interval = self.config.get_check_interval()
-        
-        print(f"\nStarting continuous monitoring...")
-        print(f"Check interval: {interval} seconds ({interval/60:.1f} minutes)")
-        print("Press Ctrl+C to stop\n")
-        
-        while True:
-            try:
-                self.run_once()
-                time.sleep(interval)
-            except KeyboardInterrupt:
-                print("\n\n✓ Bot stopped by user")
-                break
-            except Exception as e:
-                print(f"\n✗ Unexpected error: {e}")
-                print(f"Retrying in {interval} seconds...")
-                time.sleep(interval)
