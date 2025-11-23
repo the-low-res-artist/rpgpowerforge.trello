@@ -2,8 +2,6 @@
 import os
 import requests
 from requests_oauthlib import OAuth1
-from io import BytesIO
-from contextlib import contextmanager
 
 # =======================================================
 # Tweet class
@@ -13,26 +11,19 @@ class Tweet:
         self.contentStr = text
         self.mediaUrl = media_url
 
-    @contextmanager
-    def open_url(self, url, mode="rb"):
-        response = requests.get(url)
-        response.raise_for_status()
-        
-        file_like = BytesIO(response.content)
-        
-        try:
-            yield file_like
-        finally:
-            file_like.close()
-            response.close()
-
     def send(self, auth):
+
+        # step 0, download the media
+        response = requests.get(self.mediaUrl)
+        response.raise_for_status()
+        with open("/tmp/rpgpowerforge_trello_media.png", "wb") as f:
+            f.write(response.content)
 
         # step 1 : upload media
         url = "https://upload.twitter.com/1.1/media/upload.json"
 
         response = None
-        with self.open_url(self.mediaUrl, "rb") as file:
+        with self.open("/tmp/rpgpowerforge_trello_media.png", "rb") as file:
             print(self.mediaUrl)
             print(file)
             response = requests.post(url, auth=auth, files={"media": file})
