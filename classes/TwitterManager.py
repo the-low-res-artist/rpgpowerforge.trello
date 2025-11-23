@@ -27,7 +27,7 @@ class Tweet:
             print(self.mediaUrl)
             print(file)
             response = requests.post(url, auth=auth, files={"media": file})
-            print(response)
+            print(response.content)
 
         media_id = None
         if response:
@@ -60,6 +60,10 @@ class TwitterManager:
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         self.bearer_token = bearer_token
+        print(self.api_key)
+        print(self.api_secret)
+        print(self.access_token)
+        print(self.access_token_secret)
         self.client = None
         self._connect()
     
