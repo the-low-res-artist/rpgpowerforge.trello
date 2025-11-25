@@ -1,6 +1,7 @@
 # card_tracker.py
 import json
 import os
+from pathlib import Path
 
 class CardTracker:
     """Tracks which cards have been processed to avoid duplicates."""
@@ -13,7 +14,6 @@ class CardTracker:
         """Load tracked card IDs from storage file."""
         if not os.path.exists(self.storage_file):
             return set()
-        
         try:
             with open(self.storage_file, 'r') as f:
                 data = json.load(f)
@@ -25,6 +25,11 @@ class CardTracker:
     def save(self):
         """Save tracked card IDs to storage file."""
         try:
+            # first create it if the file does not exists
+            file_path = Path(self.storage_file)
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.touch(exist_ok=True)
+            # save data in file
             with open(self.storage_file, 'w') as f:
                 json.dump(list(self.tracked_cards), f, indent=2)
         except Exception as e:
