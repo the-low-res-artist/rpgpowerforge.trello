@@ -8,5 +8,5 @@ if __name__ == "__main__":
     bot = TrelloTwitterBot()
     
     # run once
-    # fetch trello + tweet is a new card is done
+    # fetch trello + tweet if a new card is done
     bot.run_once()

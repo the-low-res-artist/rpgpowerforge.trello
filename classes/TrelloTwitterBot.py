@@ -84,9 +84,11 @@ class TrelloTwitterBot:
 
             # get the cover url from the attachments
             cover_attachment_url = None
+            cover_mime = None
             for attachment in card.attachments:
                 if (attachment['mimeType'] in "image/gif image/png" and "url" in attachment and cover_attachment_id == attachment["id"]):
                     cover_url = attachment["url"]
+                    cover_mime = attachment['mimeType']
 
             # get card labels
             labels_list = []
@@ -101,7 +103,7 @@ class TrelloTwitterBot:
                 tweet_text += "\n\n" + labels
 
             # Post tweet
-            success, tweet_id = self.twitter.post_tweet(tweet_text, cover_url)
+            success, tweet_id = self.twitter.post_tweet(tweet_text, cover_url, cover_mime)
             
             if success:
                 # Mark card as tracked

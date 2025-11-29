@@ -7,44 +7,55 @@ from requests_oauthlib import OAuth1
 # Tweet class
 class Tweet:
 
-    def __init__(self, text, media_url):
-        self.contentStr = text
-        self.mediaUrl = media_url
+    def __init__(self, text, media_url, media_mime):
+        self.contentStr     = text
+        self.mediaUrl       = media_url
+        self.mediaExt       = None
+        if (mediaMine == "image/png"):
+            self.mediaExt   = "png"
+        elif (mediaMine == "image/gif"):
+            self.mediaExt   = "gif"
 
     def send(self, auth):
 
         # step 0, download the media
-        resp = requests.get(self.mediaUrl)
-        resp.raise_for_status()
-        with open("/tmp/rpgpowerforge_trello_media.png", "wb") as f:
-            f.write(resp.content)
+        media_id == None
+        if (self.mediaUrl and self.mediaExt):
+            resp = requests.get(self.mediaUrl)
+            resp.raise_for_status()
+            with open(f"/tmp/rpgpowerforge_trello_media.{self.mediaExt}", "wb") as f:
+                f.write(resp.content)
 
-        # step 1 : upload media
-        url = "https://upload.twitter.com/1.1/media/upload.json"
+            # step 1 : upload media
+            url = "https://upload.twitter.com/1.1/media/upload.json"
 
-        response = None
-        with open("/tmp/rpgpowerforge_trello_media.png", "rb") as file:
-            print(self.mediaUrl)
-            print(file)
-            response = requests.post(url, auth=auth, files={"media": file})
-            print(response.content)
+            response = None
+            with open(f"/tmp/rpgpowerforge_trello_media.{self.mediaExt}", "rb") as file:
+                print(self.mediaUrl)
+                print(file)
+                response = requests.post(url, auth=auth, files={"media": file})
+                print(response.content)
 
-        media_id = None
-        if response:
-            if "media_id" in response.json():
-                media_id = response.json()["media_id"]
+            media_id = None
+            if response:
+                if "media_id" in response.json():
+                    media_id = response.json()["media_id"]
 
-        #safe exit
-        if media_id == None:
-            print("fail to upload media")
-            return
-
+            #safe exit
+            if media_id == None:
+                print("fail to upload media")
+                return
+            payload = {
+            "text": self.contentStr,
+            "media": {"media_ids": [str(media_id)]}
+            }
+        else:
+            payload = {
+                "text": self.contentStr
+            }
+        
         # step 2 post the tweet
         tweet_url = "https://api.twitter.com/2/tweets"
-        payload = {
-            "text": self.contentStr,
-            "media": {"media_ids": [str(media_id)]}  # Use the media ID from the upload step
-        }
 
         return requests.post(tweet_url, auth=auth, json=payload)
 
