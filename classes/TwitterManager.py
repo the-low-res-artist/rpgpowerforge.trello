@@ -11,9 +11,9 @@ class Tweet:
         self.contentStr     = text
         self.mediaUrl       = media_url
         self.mediaExt       = None
-        if (mediaMine == "image/png"):
+        if (media_mime == "image/png"):
             self.mediaExt   = "png"
-        elif (mediaMine == "image/gif"):
+        elif (media_mime == "image/gif"):
             self.mediaExt   = "gif"
 
     def send(self, auth):
