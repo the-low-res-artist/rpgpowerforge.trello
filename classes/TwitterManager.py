@@ -19,7 +19,7 @@ class Tweet:
     def send(self, auth):
 
         # step 0, download the media
-        media_id == None
+        media_id = None
         if (self.mediaUrl and self.mediaExt):
             resp = requests.get(self.mediaUrl)
             resp.raise_for_status()
@@ -36,7 +36,6 @@ class Tweet:
                 response = requests.post(url, auth=auth, files={"media": file})
                 print(response.content)
 
-            media_id = None
             if response:
                 if "media_id" in response.json():
                     media_id = response.json()["media_id"]
