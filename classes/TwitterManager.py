@@ -90,7 +90,7 @@ class TwitterManager:
         except Exception as e:
             raise ConnectionError(f"Failed to connect to Twitter: {e}")
     
-    def post_tweet(self, text, media_url):
+    def post_tweet(self, text, media_url, media_mime):
         """
         Post a tweet to Twitter.
         
@@ -101,7 +101,7 @@ class TwitterManager:
             tuple: (success: bool, tweet_id: str or None)
         """        
         try:
-            twt = Tweet(text, media_url)
+            twt = Tweet(text, media_url, media_mime)
             response = twt.send(self.client)
             return True, None
         except Exception as e:
