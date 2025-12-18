@@ -31,8 +31,6 @@ class Tweet:
 
             response = None
             with open(f"/tmp/rpgpowerforge_trello_media.{self.mediaExt}", "rb") as file:
-                print(self.mediaUrl)
-                print(file)
                 response = requests.post(url, auth=auth, files={"media": file})
                 print(response.content)
 
@@ -70,10 +68,6 @@ class TwitterManager:
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         self.bearer_token = bearer_token
-        print(self.api_key)
-        print(self.api_secret)
-        print(self.access_token)
-        print(self.access_token_secret)
         self.client = None
         self._connect()
     
@@ -104,5 +98,5 @@ class TwitterManager:
             response = twt.send(self.client)
             return True, None
         except Exception as e:
-            print(f"✗ Unexpected error posting tweet: {e}")
+            print(f"Unexpected error posting tweet: {e}")
             return False, None
